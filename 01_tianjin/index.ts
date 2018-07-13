@@ -34,6 +34,9 @@ class Particle {
             }
         }
     }
+    reset() {
+
+    }
     setPos(x: number, y: number) {
         this.sprite.x = x;
         this.sprite.y = y;
@@ -41,7 +44,7 @@ class Particle {
     setV(x:number, y: number) {
         this.v = { x, y };
     }
-    update() {
+    update(stage: PIXI.Container) {
         if (this.sprite.y > this.maxHeight) {
             this.setPos(
                 this.sprite.x - this.v.x,
@@ -61,15 +64,18 @@ class Particle {
             this.explode = true;
         }
         if (this.explode) {
-            this.parts.forEach(p => p.partUpdate());
+            this.parts.forEach(p => p.partUpdate(stage));
         }
     }
-    partUpdate() {
+    partUpdate(stage: PIXI.Container) {
         this.setPos(
             this.sprite.x - this.v.x,
             this.sprite.y - this.v.y,
         );
         this.sprite.alpha -= 0.02;
+        if (this.sprite.alpha <= 0) {
+            stage.removeChild(this.sprite);
+        }
     }
 }
 
@@ -86,7 +92,7 @@ document.body.appendChild(renderer.view);
 
 function loop() {
     renderer.render(stage);
-    particles.forEach(p => p.update());
+    particles.forEach(p => p.update(stage));
     requestAnimationFrame(loop);
 }
 
