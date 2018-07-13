@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { image1 } from './images';
+import { red } from './images';
 
 const {
     innerHeight: height,
@@ -13,7 +13,7 @@ const renderer = PIXI.autoDetectRenderer(width, height, {
 const stage =　new PIXI.Container();
 
 class Particle {
-    sprite = PIXI.Sprite.fromImage(image1);
+    sprite = PIXI.Sprite.fromImage(red);
     v = {x: 0, y: 0};
     maxHeight = Math.random() * height;
     parts: Particle[] = [];
