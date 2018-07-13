@@ -1,33 +1,16 @@
-import * as Pixi from 'pixi.js';
-import { Particle } from './particle';
+import * as PIXI from 'pixi.js';
 
 const {
-    innerHeight,
-    innerWidth,
-} = window;
+    offsetHeight: height,
+    offsetWidth: width,
+} = document.body;
 
-const renderer = Pixi.autoDetectRenderer(
-    innerWidth, innerHeight,
-    {
-        transparent: true,
-    }
-);
+const renderer = PIXI.autoDetectRenderer(width, height, {
+    transparent: true,
+});
 
-document.body.appendChild(renderer.view);
-const stage = new Pixi.Container();
+const stage =　new PIXI.Container();
 
-let particle: Particle;
-const addParticle = () => {
-    particle = new Particle();
-    particle.setPos(innerWidth/2, innerHeight/2);
-    particle.setV(0.4, -1.6);
-    stage.addChild(particle.sprite);
-}
-const loop = () => {
-    requestAnimationFrame(loop);
-    renderer.render(stage);
-    particle && particle.update();
-}
+renderer.render(stage);
 
-loop();
-addParticle();
+
