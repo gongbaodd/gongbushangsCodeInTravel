@@ -1,110 +1,100 @@
 import * as PIXI from 'pixi.js';
-import { red } from './images';
+import {
+    red,
+    blue,
+    green,
+    yellow,
+} from './images';
 
+const images = [red, blue, green, yellow];
 const {
     innerHeight: height,
     innerWidth: width,
 } = window;
-
-const renderer = PIXI.autoDetectRenderer(width, height, {
-    transparent: true,
-});
-
-const stage =　new PIXI.Container();
+const renderer = PIXI.autoDetectRenderer(width, height, { transparent: true });
+document.body.appendChild(renderer.view);
+const scene = new PIXI.Container();
 
 class Particle {
-    sprite = PIXI.Sprite.fromImage(red);
-    v = {x: 0, y: 0};
-    maxHeight = Math.random() * height;
-    parts: Particle[] = [];
-    steps = Math.floor( 50 * Math.random() ) + 10;
-    radius = 5*Math.random() + 3;
+    sprite = PIXI.Sprite.fromImage(images[Math.floor(Math.random()*images.length)]);
+    v = { x:0, y:0 }
+    maxHeight　= Math.random() * height;
+    sparkles: Particle[] = [];
+    sparkleCount = Math.floor(Math.random()) * 20 + 10;
     isFirework = false;
     explode = false;
-    faded = false;
-    gravity = 0.03;
+    radius = Math.random() * 10 + 2;
+    reset() {
+        this.explode = false;
+        this.setPos(width * Math.random(), height * Math.random());
+    }
     constructor(isFirework?: boolean) {
-        this.isFirework = isFirework;
         this.sprite.scale.x = 0.5;
         this.sprite.scale.y = 0.5;
-        this.reset();
-        if (this.isFirework) {
-            this.sprite.alpha = 1;
-            for (let i = 0; i< this.steps; i++) {
-                const part = new Particle();
-                part.sprite.alpha = 0;
-                this.parts.push(part);
+
+        this.isFirework = isFirework;
+
+        if (isFirework) {
+            for (let i = 0; i< this.sparkleCount; i++) {
+                const s = new Particle();
+                s.sprite.alpha = 0;
+                this.sparkles.push(s);
             }
-        }
-    }
-    reset() {
-        this.setPos(0, height);
-        if (this.isFirework) this.sprite.alpha = 1;
-        this.explode = false;
+        }        
     }
     setPos(x: number, y: number) {
-        this.sprite.x = x;
-        this.sprite.y = y;
+        this.sprite.position.x = x;
+        this.sprite.position.y = y;
     }
-    setV(x:number, y: number) {
-        this.v = { x, y };
+    setV(x: number, y: number) {
+        this.v = {x, y};
     }
-    update(stage: PIXI.Container) {
-        if (this.sprite.y > this.maxHeight) {
-            this.setPos(
-                this.sprite.x - this.v.x,
-                this.sprite.y - this.v.y,
-            );
+    sparkleUpdate(exploder: Particle) {
+        if (this.sprite.alpha <= 0) {
+            exploder.reset();
+        } else {
+            this.sprite.position.x += this.v.x;
+            this.sprite.position.y -= this.v.y;
+            this.sprite.alpha -= 0.01;
         }
-        if (this.sprite.y <= this.maxHeight && !this.explode) {
-            this.sprite.alpha = 0;
-            this.parts.forEach((p, i) => {
-                p.sprite.alpha = 1;
-                p.setPos(this.sprite.x, this.sprite.y);
-                p.setV(
-                    this.radius * Math.cos(2* Math.PI*i/this.steps),
-                    this.radius * Math.sin(2*Math.PI*i/this.steps)
-                );                
-            });
+    }
+    update() {
+        if (this.maxHeight < this.sprite.position.y) {
+            this.sprite.position.x += this.v.x;
+            this.sprite.position.y -= this.v.y;
+        }
+        if (!this.explode && this.maxHeight >= this.sprite.position.y) {
             this.explode = true;
+            this.sprite.alpha = 0;
+            this.sparkles.forEach((s, i) => { 
+                s.sprite.alpha = 1;
+                s.setPos(this.sprite.x, this.sprite.y);
+                s.setV(
+                    this.radius * Math.cos(Math.PI * 2 * i/this.sparkleCount),
+                    this.radius * Math.sin(Math.PI * 2 * i/this.sparkleCount)
+                );
+            });
         }
         if (this.explode) {
-            this.parts.forEach(p => p.partUpdate(stage, this));
-        }
-    }
-    partUpdate(stage: PIXI.Container, exploder: Particle) {
-        this.setPos(
-            this.sprite.x - this.v.x,
-            this.sprite.y - this.v.y + 3,
-        );
-        this.sprite.alpha -= 0.02;
-        if (this.sprite.alpha <= 0 && !this.faded) {
-            exploder.reset();
-        }
+            this.sparkles.forEach(p => p.sparkleUpdate(this));
+        }   
     }
 }
 
 const particles: Particle[] = [];
-for (let i = 0; i < 25; i++) {
+
+for(let i=0; i<100; i++) {
     const p = new Particle(true);
+    p.setPos(width * Math.random(), height * Math.random());
+    p.setV(0, 1);
     particles.push(p);
-    stage.addChild(p.sprite); 
-    p.parts.forEach(_p => stage.addChild(_p.sprite)); 
+    p.sparkles.forEach(s => scene.addChild(s.sprite));
+    scene.addChild(p.sprite);
 }
-document.body.appendChild(renderer.view);
 
 function loop() {
-    renderer.render(stage);
-    particles.forEach(p => {
-        p.update(stage);
-
-        if (p.sprite.y === height) {
-            p.setPos((width/2) * Math.random()+ width/4, height * 0.8 * Math.random());
-            p.setV(0, 1);
-        }
-    });
     requestAnimationFrame(loop);
+    renderer.render(scene);
+    particles.forEach(p => p.update());
 }
-
 loop();
-

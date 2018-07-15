@@ -19,28 +19,28 @@ class Particle {
     sprite = PIXI.Sprite.fromImage(images[Math.floor(Math.random()*images.length)]);
     v = { x:0, y:0 }
     maxHeight　= Math.random() * height;
+    isExploded = false;
     sparkles: Particle[] = [];
-    sparkleCount = Math.floor(Math.random()) * 20 + 10;
+    sparkleCount = Math.floor(Math.random() * 10) + 10;
+    radius = Math.random() * 5 + 5;
     isFirework = false;
-    explode = false;
-    radius = Math.random() * 10 + 2;
     reset() {
-        this.explode = false;
+        this.isExploded = false;
         this.setPos(width * Math.random(), height * Math.random());
+        this.sprite.alpha = 1;
     }
     constructor(isFirework?: boolean) {
         this.sprite.scale.x = 0.5;
-        this.sprite.scale.y = 0.5;
-
+        this.sprite.scale.y = 0.5; 
         this.isFirework = isFirework;
 
-        if (isFirework) {
-            for (let i = 0; i< this.sparkleCount; i++) {
-                const s = new Particle();
-                s.sprite.alpha = 0;
-                this.sparkles.push(s);
+        if (this.isFirework) {
+            for (let i =0; i< this.sparkleCount; i++) {
+                const p = new Particle();
+                p.sprite.alpha = 0;
+                this.sparkles[i] = p;
             }
-        }        
+        }
     }
     setPos(x: number, y: number) {
         this.sprite.position.x = x;
@@ -50,34 +50,46 @@ class Particle {
         this.v = {x, y};
     }
     sparkleUpdate(exploder: Particle) {
-        if (this.sprite.alpha <= 0) {
-            exploder.reset();
-        } else {
-            this.sprite.position.x += this.v.x;
-            this.sprite.position.y -= this.v.y;
+        if (this.sprite.alpha > 0) {
+            this.setPos(
+                this.sprite.position.x + this.v.x,
+                this.sprite.position.y - this.v.y
+            );
             this.sprite.alpha -= 0.01;
+        } else {
+            this.sprite.alpha = 0;
+            exploder.reset();
         }
     }
     update() {
         if (this.maxHeight < this.sprite.position.y) {
-            this.sprite.position.x += this.v.x;
-            this.sprite.position.y -= this.v.y;
+            this.setPos(
+                this.sprite.position.x + this.v.x,
+                this.sprite.position.y - this.v.y
+            );
         }
-        if (!this.explode && this.maxHeight >= this.sprite.position.y) {
-            this.explode = true;
+        if (!this.isExploded && this.maxHeight >= this.sprite.position.y) {
             this.sprite.alpha = 0;
-            this.sparkles.forEach((s, i) => { 
-                s.sprite.alpha = 1;
-                s.setPos(this.sprite.x, this.sprite.y);
-                s.setV(
-                    this.radius * Math.cos(Math.PI * 2 * i/this.sparkleCount),
-                    this.radius * Math.sin(Math.PI * 2 * i/this.sparkleCount)
+            this.isExploded = true;
+            this.sparkles.forEach((s, i) => {
+                s.setPos(
+                    this.sprite.position.x,
+                    this.sprite.position.y,
                 );
+
+                s.setV(
+                    this.radius * Math.cos(2* Math.PI /this.sparkleCount * i),
+                    this.radius * Math.sin(2* Math.PI /this.sparkleCount * i),
+                );
+
+                s.sprite.alpha = 1;
             });
         }
-        if (this.explode) {
-            this.sparkles.forEach(p => p.sparkleUpdate(this));
-        }   
+
+        if (this.isExploded) {
+            this.sparkles.forEach(s => s.sparkleUpdate(this));
+        }
+        
     }
 }
 
