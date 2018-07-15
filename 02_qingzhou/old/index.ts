@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { green } from './image';
+import { green } from './old/image';
 
 const {
     innerWidth: width,
@@ -13,10 +13,10 @@ const scene = new PIXI.Container();
  * barnsley fern
  * x > -2.1820 && x < 2.6558
  * y >=0 && y<= 9.9983
- * f1 = () =>{x:0, y: 0.16*y} 0.01
- * f2 = () => {x：0.85*x + 0.04*y, y: -0.04*x + 0.85*y + 1.6} 0.86
- * f3 = () => { x: 0.2* x - 0.26*y, y: 0.23*x + 0.22*y + 1.6 } 0.93
- * f4 = () => { x: -0.15*x + 0.28*y, y: 0.26*x + 0.24*y + 0.44} 1
+ * f1 = () => ({ x: 0, y: 0.16*y}) 0.01
+ * f2 = () => ({ x：0.85*x + 0.04*y, y: -0.04*x + 0.85*y + 1.6}) 0.86
+ * f3 = () => ({ x: 0.2* x - 0.26*y, y: 0.23*x + 0.22*y + 1.6 }) 0.93
+ * f4 = () => ({ x: -0.15*x + 0.28*y, y: 0.26*x + 0.24*y + 0.44}) 1
  * @class Particle
  */
 const f1 = (x: number, y: number) => ({ x: 0, y: 0.16*y });
