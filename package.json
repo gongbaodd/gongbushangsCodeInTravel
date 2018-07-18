@@ -1,0 +1,25 @@
+{
+  "name": "gongbushangscodeintravel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gongbaodd/gongbushangsCodeInTravel.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gongbaodd/gongbushangsCodeInTravel/issues"
+  },
+  "homepage": "https://github.com/gongbaodd/gongbushangsCodeInTravel#readme",
+  "dependencies": {
+    "three": "^0.94.0"
+  },
+  "devDependencies": {
+    "typescript": "^2.9.2"
+  }
+}
