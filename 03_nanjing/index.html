@@ -10,10 +10,29 @@
         padding: 0;
         margin: 0;
     }
+    .form {
+        display: flex;
+    }
+    .button {
+        flex: 1;
+        padding: 20px;
+    }
+    .container{
+        display: flex;
+        justify-content: center;
+    }
+    #canvas {
+        transform: rotateZ(180deg);
+        margin: 10px;
+    }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
+    <div class="container" id="canvas">
+    </div>
+    <div class="form">
+        <button class="button">增加</button>
+    </div>
     <script src="./index.ts"></script>
 </body>
 </html>

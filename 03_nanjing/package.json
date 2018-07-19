@@ -1,0 +1,19 @@
+{
+    "name": "03_nanjing",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "typescript": "^2.9.2"
+    },
+    "dependencies": {
+      "@types/pixi.js": "^4.8.0",
+      "pixi.js": "^4.8.1"
+    }
+  }
+  
