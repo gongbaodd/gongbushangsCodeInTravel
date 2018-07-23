@@ -5,10 +5,17 @@ const height = 600;
 const app = new PIXI.Application({
     width, height, transparent: true,
 })
-
 document.getElementById('canvas').appendChild(app.view);
 
 const scene = app.stage;
+
+const oneAngle = Math.PI / 6;
+const oneLine = 35;
+
+let x = 0;
+let y = 0;
+let angle = Math.PI/2;
+const stores = [];
 
 // var F+-[]
 // axiom F
@@ -17,29 +24,23 @@ const scene = app.stage;
 let str = 'F';
 const axiom = 'F';
 const rules = {
-    [axiom]: 'FF+[+F-F-F]-[-F+F+F]',
+    [axiom]: 'FF+[+F-F-F]-[-F+F+F]'
 };
 
 function generate() {
-    let newStr = '';
+    let newS = '';
     str.split('').forEach(c => {
-        if (c === axiom) {
-            newStr += rules[axiom];
+        if(rules[c]) {
+            newS += rules[c];
         } else {
-            newStr += c;
+            newS += c;
         }
     });
     turtle();
-    str = newStr;
+    str = newS;
 }
 
 let graphics = new PIXI.Graphics();
-const length = 30;
-let angle = Math.PI / 2;
-const segAngle = Math.PI / 6;
-let x = 0;
-let y = 0;
-const store: {x:number, y:number, angle: number}[] = [];
 
 function turtle() {
     str.split('').forEach(c => {
@@ -47,45 +48,43 @@ function turtle() {
             case 'F': {
                 graphics.lineStyle(10, 0x00ff00);
                 graphics.moveTo(x, y);
-                x = x + length * Math.cos(angle);
-                y = y + length * Math.sin(angle);
+                x = x + oneLine * Math.cos(angle);
+                y = y + oneLine * Math.sin(angle);
                 graphics.lineTo(x, y);
                 break;
             }
             case '+': {
-                angle += segAngle;
+                angle = angle + oneAngle;
                 break;
             }
             case '-': {
-                angle -= segAngle;
+                angle = angle - oneAngle;
                 break;
             }
             case '[': {
-                store.push({ x, y, angle });
+                scene.addChild(graphics);
+                const store = { x, y, angle };
+                stores.push(store);
                 break;
             }
             case ']': {
-                const s = store.pop();
-                x = s.x;
-                y = s.y;
-                angle = s.angle;
+                graphics = new PIXI.Graphics();
+                const store = stores.pop();
+                x = store.x;
+                y = store.y;
+                angle = store.angle
                 break;
             }
         }
     });
-    scene.addChild(graphics);
 }
-
 let scale = 1;
-
-window.addEventListener('click', e => {
-    const target = e.target as HTMLElement;
-    if (target.className === 'button') {
+document.body.addEventListener('click', ({ target }) => {
+    if ((target as HTMLElement).className === 'button') {
         generate();
         scene.scale.set(scale, scale);
         scene.pivot.set(scale, scale);
-        scene.position.set(width/2 , 0);
-        scale = scale * 0.75;
-    }
+        scene.position.set(width/2, 0);
+        scale = scale / 4 * 3;
+   }
 }, false);
-
