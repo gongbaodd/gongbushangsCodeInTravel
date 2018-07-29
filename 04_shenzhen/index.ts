@@ -16,4 +16,18 @@ document.body.appendChild(renderer.domElement);
 // dx = dt * a * (y - x)
 // dy = dt * x * (b - z) - y
 // dz = dt * (x * y - c * z)
+class LorezSys {
+    add(scene: Scene) {
+        
+    }
+    init() {
 
+    }
+}
+
+function draw() {
+    camera.lookAt(scene.position);
+    renderer.render(scene, camera);
+    requestAnimationFrame(draw);
+}
+draw();
