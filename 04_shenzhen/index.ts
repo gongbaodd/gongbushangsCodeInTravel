@@ -16,6 +16,9 @@ document.body.appendChild(renderer.domElement);
 // dx = dt * a * (y - x)
 // dy = dt * x * (b - z) - y
 // dz = dt * (x * y - c * z)
+// a = 28
+// b = 10
+// c = 8/3
 class LorezSys {
     add(scene: Scene) {
         
