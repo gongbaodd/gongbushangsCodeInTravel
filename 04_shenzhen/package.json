@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@types/three": "^0.92.13",
-    "three": "^0.94.0"
+    "three": "^0.94.0",
+    "three-orbitcontrols": "^2.1.2"
   }
 }
