@@ -1,5 +1,5 @@
 import Controls from 'three-orbitcontrols';
-import { WebGLRenderer, PerspectiveCamera, Scene } from 'three';
+import { WebGLRenderer, PerspectiveCamera, Scene, Geometry, PointsMaterial, VertexColors, Points } from 'three';
 
 const {
     innerHeight: height,
@@ -20,14 +20,28 @@ document.body.appendChild(renderer.domElement);
 // b = 10
 // c = 8/3
 class LorezSys {
+    geo = new Geometry();
+    mat = new PointsMaterial({
+        size: 1,
+        vertexColors: VertexColors,
+        depthTest: false,
+        opacity: 0.2,
+        sizeAttenuation: false,
+        transparent: true,
+    });
+    mesh: Points;
     add(scene: Scene) {
-        
+        this.init();
+        this.mesh = new Points(this.geo, this.mat);
+        scene.add(this.mesh);
     }
     init() {
 
     }
 }
 
+const geo = new LorezSys();
+geo.add(scene);
 function draw() {
     camera.lookAt(scene.position);
     renderer.render(scene, camera);
